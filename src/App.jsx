@@ -5,6 +5,8 @@ import Loader from "./components/Loader";
 import Home from "./pages/Home/home";
 import NotFound from "./pages/NotFound404/NotFound404";
 import SignIn from "./pages/Authentication/signIn";
+import SignUp from "./pages/Authentication/SignUp";
+import ResetPassword from "./pages/Authentication/ResetPassword";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -38,6 +40,24 @@ function App() {
             <>
               <PageTitle title="SignIn | DOT Music" />
               <SignIn />
+            </>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <>
+              <PageTitle title="SignUp | DOT Music" />
+              <SignUp />
+            </>
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            <>
+              <PageTitle title="Reset Password | DOT Music" />
+              <ResetPassword />
             </>
           }
         />
