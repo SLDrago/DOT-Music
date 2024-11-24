@@ -13,7 +13,7 @@ createRoot(document.getElementById("root")).render(
       <AuthProvider>
         <App />
       </AuthProvider>
-      <ToastContainer position="top-right" autoClose={5000} />
+      <ToastContainer position="top-right" autoClose={5000} theme="dark" />
     </Router>
   </StrictMode>
 );

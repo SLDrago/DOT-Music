@@ -1,26 +1,91 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Logo from "../../images/logos/Logo.svg";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useAuth } from "../../context/AuthContext";
+
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+const SIGNUP_ENDPOINT = `${API_BASE_URL}/signup`;
 
 const SignUp = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confPassword, setConfPassword] = useState("");
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+  const { login, token } = useAuth();
+  const navigate = useNavigate();
 
-  const handleNext = (e) => {
+  useEffect(() => {
+    if (token) {
+      navigate("/");
+    }
+  }, [token, navigate]);
+
+  useEffect(() => {
+    const newErrors = {};
+
+    if (touched.name && !name) {
+      newErrors.name = "Name is required.";
+    }
+    if (touched.email) {
+      if (!email) {
+        newErrors.email = "Email is required.";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        newErrors.email = "Invalid email format.";
+      }
+    }
+    if (touched.password) {
+      if (!password) {
+        newErrors.password = "Password is required.";
+      } else if (password.length < 6) {
+        newErrors.password = "Password must be at least 6 characters long.";
+      }
+    }
+    if (touched.confPassword) {
+      if (!confPassword) {
+        newErrors.confPassword = "Confirm Password is required.";
+      } else if (password !== confPassword) {
+        newErrors.confPassword = "Passwords do not match.";
+      }
+    }
+
+    setErrors(newErrors);
+  }, [name, email, password, confPassword, touched]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Simple email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setError(
-        "This email is invalid. Make sure it's written like example@email.com"
-      );
-    } else {
-      setError("");
-      alert("Proceeding to the next step!");
+    if (Object.keys(errors).length > 0) {
+      toast.error("Please fix the errors before submitting.");
+      return;
     }
+
+    try {
+      const response = await toast.promise(
+        axios.post(SIGNUP_ENDPOINT, { name, email, password }),
+        {
+          pending: "Signing up...",
+          success: "Signup successful!",
+          error: "Signup failed. Please try again.",
+        }
+      );
+
+      const { token, user } = response.data;
+      login(token, user);
+      navigate("/");
+    } catch (error) {
+      console.error(
+        "Error during signup:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  const handleBlur = (field) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
   };
 
   return (
@@ -32,7 +97,28 @@ const SignUp = () => {
             Sign up to start listening
           </h1>
         </div>
-        <form onSubmit={handleNext} className="mt-6">
+        <form onSubmit={handleSubmit} className="mt-6">
+          <div className="mb-4">
+            <label className="block text-gray-400 text-sm mb-1" htmlFor="name">
+              Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              className={`w-full px-4 py-2 bg-gray-800 text-white rounded focus:outline-none ${
+                errors.name
+                  ? "border-red-500 border-2"
+                  : "focus:ring-2 focus:ring-orange-500"
+              }`}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onBlur={() => handleBlur("name")}
+              placeholder="Your Name"
+            />
+            {errors.name && (
+              <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+            )}
+          </div>
           <div className="mb-4">
             <label className="block text-gray-400 text-sm mb-1" htmlFor="email">
               Email address
@@ -41,50 +127,71 @@ const SignUp = () => {
               type="text"
               id="email"
               className={`w-full px-4 py-2 bg-gray-800 text-white rounded focus:outline-none ${
-                error
-                  ? "border-red-500 border-4"
+                errors.email
+                  ? "border-red-500 border-2"
                   : "focus:ring-2 focus:ring-orange-500"
               }`}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onBlur={() => handleBlur("email")}
               placeholder="name@domain.com"
             />
-            {error && (
-              <p className="text-red-500 text-xs mt-1">
-                <span className="mr-1">⚠️</span>
-                {error}
-              </p>
+            {errors.email && (
+              <p className="text-red-500 text-xs mt-1">{errors.email}</p>
             )}
           </div>
           <div className="mb-4">
-            <label className="block text-gray-400 text-sm mb-1" htmlFor="email">
+            <label
+              className="block text-gray-400 text-sm mb-1"
+              htmlFor="password"
+            >
               Password
             </label>
             <input
               type="password"
               id="password"
-              className={`w-full px-4 py-2 bg-gray-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-orange-500`}
+              className={`w-full px-4 py-2 bg-gray-800 text-white rounded focus:outline-none ${
+                errors.password
+                  ? "border-red-500 border-2"
+                  : "focus:ring-2 focus:ring-orange-500"
+              }`}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onBlur={() => handleBlur("password")}
               placeholder="Password"
             />
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+            )}
           </div>
           <div className="mb-4">
-            <label className="block text-gray-400 text-sm mb-1" htmlFor="email">
+            <label
+              className="block text-gray-400 text-sm mb-1"
+              htmlFor="confPassword"
+            >
               Confirm Password
             </label>
             <input
               type="password"
               id="confPassword"
-              className={`w-full px-4 py-2 bg-gray-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-orange-500`}
+              className={`w-full px-4 py-2 bg-gray-800 text-white rounded focus:outline-none ${
+                errors.confPassword
+                  ? "border-red-500 border-2"
+                  : "focus:ring-2 focus:ring-orange-500"
+              }`}
               value={confPassword}
               onChange={(e) => setConfPassword(e.target.value)}
+              onBlur={() => handleBlur("confPassword")}
               placeholder="Confirm Password"
             />
+            {errors.confPassword && (
+              <p className="text-red-500 text-xs mt-1">{errors.confPassword}</p>
+            )}
           </div>
           <button
             type="submit"
             className="w-full bg-orange-500 text-white font-medium py-2 rounded hover:bg-orange-600"
+            disabled={Object.keys(errors).length > 0}
           >
             Create Account
           </button>
