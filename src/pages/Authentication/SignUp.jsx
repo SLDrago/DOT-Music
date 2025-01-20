@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
-const SIGNUP_ENDPOINT = `${API_BASE_URL}/signup`;
+const SIGNUP_ENDPOINT = `${API_BASE_URL}/users/register/`;
 
 const SignUp = () => {
   const [name, setName] = useState("");
