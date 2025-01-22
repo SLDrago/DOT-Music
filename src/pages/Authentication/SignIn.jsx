@@ -60,9 +60,8 @@ const SignIn = () => {
         }
       );
 
-      console.log("Response:", response.data);
-      const { token, user } = response.data;
-      login(token, user);
+      const { access_token, user } = response.data.user;
+      login(access_token, user);
       navigate("/");
     } catch (error) {
       console.error(
