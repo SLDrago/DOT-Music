@@ -1,16 +1,72 @@
-// EditProfile.js
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
+
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const EditProfile = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    gender: "",
+    birthday: "",
+  });
+
   const [profileImage, setProfileImage] = useState(
-    "https://via.placeholder.com/150" // Placeholder image
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.name)}`
   );
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setProfileImage(imageUrl);
+  const { token } = useAuth();
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/users/user-profile/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const userData = response.data;
+
+      setFormData({
+        name: userData.name,
+        email: userData.email,
+        gender: userData.gender,
+        birthday: userData.birthday,
+      });
+    } catch (error) {
+      console.error(
+        "Error fetching user data:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.patch(`${API_BASE_URL}/users/edit-user/`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      alert("Profile updated successfully!");
+    } catch (error) {
+      console.error(
+        "Error updating profile:",
+        error.response?.data || error.message
+      );
     }
   };
 
@@ -19,34 +75,35 @@ const EditProfile = () => {
       {/* Profile Header */}
       <div className="bg-gray-800 p-8 flex items-center space-x-6">
         <div className="relative">
-          {/* Profile Picture */}
           <img
             src={profileImage}
             alt="Profile"
             className="w-24 h-24 rounded-full object-cover border-4 border-gray-600"
           />
-          {/* Hidden File Input */}
           <input
             type="file"
             accept="image/*"
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            onChange={handleImageChange}
+            onChange={(e) => {
+              const file = e.target.files[0];
+              if (file) {
+                const imageUrl = URL.createObjectURL(file);
+                setProfileImage(imageUrl);
+              }
+            }}
           />
         </div>
-        {/* User Details */}
         <div>
-          <h2 className="text-4xl font-bold">Dilshanoshada</h2>
-          <p className="text-gray-400">1 Follower • 11 Following</p>
+          <h2 className="text-4xl font-bold">{formData.name}</h2>
         </div>
       </div>
 
       {/* Edit Profile Form */}
       <div className="flex justify-center items-center mt-8">
         <div className="w-full max-w-2xl p-8">
-          <h1 className="text-3xl font-bold mb-8">Edit profile</h1>
-
-          <form>
-            {/* name */}
+          <h1 className="text-3xl font-bold mb-8">Edit Profile</h1>
+          <form onSubmit={handleSubmit}>
+            {/* Name */}
             <div className="mb-6">
               <label htmlFor="name" className="block text-sm mb-2">
                 Name
@@ -54,9 +111,10 @@ const EditProfile = () => {
               <input
                 type="text"
                 id="name"
-                value="DilshanOshada"
-                disabled
-                className="w-full p-3 bg-gray-800 text-gray-400 rounded-lg border border-gray-600"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-600"
               />
             </div>
 
@@ -68,21 +126,10 @@ const EditProfile = () => {
               <input
                 type="email"
                 id="email"
-                value="dilshanoshada7@gmail.com"
-                className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-600 hover:border-orange-500 focus:ring-2 focus:ring-orange-500 focus:outline-none"
-              />
-            </div>
-
-            {/* Password */}
-            <div className="mb-6">
-              <label htmlFor="password" className="block text-sm mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                placeholder="********"
-                className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-600 hover:border-orange-500 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-600"
               />
             </div>
 
@@ -93,7 +140,10 @@ const EditProfile = () => {
               </label>
               <select
                 id="gender"
-                className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-600 hover:border-orange-500 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                name="gender"
+                value={formData.gender}
+                onChange={handleInputChange}
+                className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-600"
               >
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
@@ -101,65 +151,18 @@ const EditProfile = () => {
               </select>
             </div>
 
-            {/* Date of Birth */}
-            <div className="mb-6 grid grid-cols-3 gap-4">
-              <div>
-                <label htmlFor="day" className="block text-sm mb-2">
-                  Day
-                </label>
-                <input
-                  type="number"
-                  id="day"
-                  value="15"
-                  className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-600 hover:border-orange-500 focus:ring-2 focus:ring-orange-500 focus:outline-none"
-                />
-              </div>
-              <div>
-                <label htmlFor="month" className="block text-sm mb-2">
-                  Month
-                </label>
-                <select
-                  id="month"
-                  className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-600 hover:border-orange-500 focus:ring-2 focus:ring-orange-500 focus:outline-none"
-                >
-                  <option value="December">December</option>
-                  <option value="January">January</option>
-                  <option value="February">February</option>
-                  <option value="March">March</option>
-                  <option value="April">April</option>
-                  <option value="May">May</option>
-                  <option value="June">June</option>
-                  <option value="july">July</option>
-                  <option value="August">August</option>
-                  <option value="September">September</option>
-                  <option value="October">October</option>
-                  <option value="November">November</option>
-                </select>
-              </div>
-              <div>
-                <label htmlFor="year" className="block text-sm mb-2">
-                  Year
-                </label>
-                <input
-                  type="number"
-                  id="year"
-                  value="2000"
-                  className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-600 hover:border-orange-500 focus:ring-2 focus:ring-orange-500 focus:outline-none"
-                />
-              </div>
-            </div>
-
-            {/* Country */}
+            {/* Birthday */}
             <div className="mb-6">
-              <label htmlFor="country" className="block text-sm mb-2">
-                Country or region
+              <label htmlFor="birthday" className="block text-sm mb-2">
+                Birthday
               </label>
               <input
-                type="text"
-                id="country"
-                value="Sri Lanka"
-                disabled
-                className="w-full p-3 bg-gray-800 text-gray-400 rounded-lg border border-gray-600"
+                type="date"
+                id="birthday"
+                name="birthday"
+                value={formData.birthday}
+                onChange={handleInputChange}
+                className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-600"
               />
             </div>
 
@@ -175,7 +178,7 @@ const EditProfile = () => {
                 type="submit"
                 className="px-6 py-3 bg-orange-500 text-black rounded-lg font-medium hover:bg-orange-600"
               >
-                Save profile
+                Save Profile
               </button>
             </div>
           </form>
