@@ -5,12 +5,30 @@ import { createContext, useContext, useState, useEffect } from "react";
 const AuthContext = createContext(undefined);
 
 const encryptData = (data) => {
-  return CryptoJS.AES.encrypt(data, "your-secret-key").toString();
+  try {
+    const stringData = typeof data === "string" ? data : JSON.stringify(data);
+    return CryptoJS.AES.encrypt(stringData, "your-secret-key").toString();
+  } catch (error) {
+    console.error("Error during encryption:", error);
+    return null;
+  }
 };
 
 const decryptData = (data) => {
-  const bytes = CryptoJS.AES.decrypt(data, "your-secret-key");
-  return bytes.toString(CryptoJS.enc.Utf8);
+  try {
+    const bytes = CryptoJS.AES.decrypt(data, "your-secret-key");
+    const decryptedString = bytes.toString(CryptoJS.enc.Utf8);
+
+    // Attempt to parse JSON if applicable
+    try {
+      return JSON.parse(decryptedString);
+    } catch {
+      return decryptedString; // Return as string if not JSON
+    }
+  } catch (error) {
+    console.error("Error during decryption:", error);
+    return null;
+  }
 };
 
 // Function to store token and user in cookies
@@ -30,7 +48,7 @@ const readAuthData = () => {
   if (savedToken && savedUser) {
     return {
       token: decryptData(savedToken),
-      user: JSON.parse(decryptData(savedUser)),
+      user: decryptData(savedUser),
     };
   }
   return { token: null, user: null };
@@ -55,6 +73,10 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = (token, user) => {
+    if (!token || !user) {
+      console.error("Invalid token or user data provided to login.");
+      return;
+    }
     setToken(token);
     setUser(user);
     storeAuthData(token, user);
