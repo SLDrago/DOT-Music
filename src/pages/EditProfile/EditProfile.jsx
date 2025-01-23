@@ -11,12 +11,10 @@ const EditProfile = () => {
     gender: "",
     birthday: "",
   });
-
+  const { token, user } = useAuth();
   const [profileImage, setProfileImage] = useState(
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.name)}`
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}`
   );
-
-  const { token } = useAuth();
 
   useEffect(() => {
     fetchUserData();
