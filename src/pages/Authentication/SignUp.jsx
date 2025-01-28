@@ -73,9 +73,15 @@ const SignUp = () => {
         }
       );
 
-      const { access_token, user } = response.data.user;
-      login(access_token, user);
-      navigate("/");
+      const { access_token, refresh_token, ...userDetails } =
+        response.data.user;
+
+      if (access_token && userDetails) {
+        login(access_token, { ...userDetails }, refresh_token);
+        navigate("/");
+      } else {
+        console.error("Invalid login response structure.");
+      }
     } catch (error) {
       console.error(
         "Error during signup:",

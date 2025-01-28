@@ -6,7 +6,9 @@ import { NavLink } from "react-router-dom";
 const TopNavBar = () => {
   const { token, user, logout } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [profileImage, setProfileImage] = useState("Profile");
+  const [profileImage, setProfileImage] = useState(
+    "https://ui-avatars.com/api/?name=#"
+  );
   useEffect(() => {
     if (user) {
       setProfileImage(
