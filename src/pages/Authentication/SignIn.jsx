@@ -64,7 +64,7 @@ const SignIn = () => {
         response.data.user;
 
       if (access_token && userDetails) {
-        login(access_token, { ...userDetails, refresh_token });
+        login(access_token, { ...userDetails }, refresh_token);
         navigate("/");
       } else {
         console.error("Invalid login response structure.");

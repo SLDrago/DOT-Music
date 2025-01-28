@@ -1,17 +1,21 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
+import { toast } from "react-toastify";
+import axiosInstance from "../../utils/axiosInstance";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const EditProfile = () => {
-  const [formData, setFormData] = useState({
+  var [formData, setFormData] = useState({
     name: "",
     email: "",
     gender: "",
     birthday: "",
+    new_password: "",
   });
-  const { token, user } = useAuth();
+  const [confpassword, setConfPassword] = useState("");
+  const { token, user, refreshToken } = useAuth();
   const [profileImage, setProfileImage] = useState(
     `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}`
   );
@@ -34,6 +38,7 @@ const EditProfile = () => {
         email: userData.email,
         gender: userData.gender,
         birthday: userData.birthday,
+        new_password: "",
       });
     } catch (error) {
       console.error(
@@ -51,15 +56,44 @@ const EditProfile = () => {
     }));
   };
 
+  const handlePWChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "new_password") {
+      setFormData((prev) => ({
+        ...prev,
+        new_password: value,
+      }));
+    } else if (name === "confpassword") {
+      setConfPassword(value);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (formData.new_password || confpassword) {
+      if (formData.new_password !== confpassword) {
+        toast.error("Passwords do not match. Please try again.");
+        return;
+      }
+    } else {
+      const { new_password, ...rest } = formData;
+      formData = rest;
+    }
+
     try {
-      await axios.patch(`${API_BASE_URL}/users/edit-user/`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      alert("Profile updated successfully!");
+      await toast.promise(
+        axiosInstance.patch(`${API_BASE_URL}/users/edit-user/`, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+        {
+          pending: "Updating profile...",
+          success: "Profile updated successfully!",
+          error: "Failed to update profile. Please try again.",
+        }
+      );
     } catch (error) {
       console.error(
         "Error updating profile:",
@@ -143,9 +177,8 @@ const EditProfile = () => {
                 onChange={handleInputChange}
                 className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-600"
               >
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
               </select>
             </div>
 
@@ -163,7 +196,32 @@ const EditProfile = () => {
                 className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-600"
               />
             </div>
-
+            <hr />
+            {/* Password */}
+            <div className="mb-6 mt-6">
+              <label htmlFor="new_password" className="block text-sm mb-2">
+                New Password
+              </label>
+              <input
+                type="password"
+                id="new_password"
+                name="new_password"
+                value={formData.new_password}
+                onChange={handlePWChange}
+                className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-600"
+              />
+              <label htmlFor="confpassword" className="block text-sm mb-2">
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                id="confpassword"
+                name="confpassword"
+                value={confpassword}
+                onChange={handlePWChange}
+                className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-600"
+              />
+            </div>
             {/* Buttons */}
             <div className="flex justify-between">
               <button
