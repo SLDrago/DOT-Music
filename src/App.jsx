@@ -123,6 +123,10 @@ function App() {
             <>
               <PageTitle title="Radios | DOT Music" />
               <SingleSection />
+            </>
+          }
+            />
+           <Route 
           path="/edit-profile"
           element={
             <>
