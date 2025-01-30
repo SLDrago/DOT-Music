@@ -1,94 +1,118 @@
-import { createContext, useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import PropTypes from "prop-types";
 import Cookies from "js-cookie";
 import CryptoJS from "crypto-js";
+import { createContext, useContext, useState, useEffect } from "react";
 
-// Create the AuthContext
 const AuthContext = createContext(undefined);
+
+const encryptData = (data) => {
+  try {
+    const stringData = typeof data === "string" ? data : JSON.stringify(data);
+    return CryptoJS.AES.encrypt(stringData, "your-secret-key").toString();
+  } catch (error) {
+    console.error("Error during encryption:", error);
+    return null;
+  }
+};
+
+const decryptData = (data) => {
+  try {
+    const bytes = CryptoJS.AES.decrypt(data, "your-secret-key");
+    const decryptedString = bytes.toString(CryptoJS.enc.Utf8);
+
+    // Attempt to parse JSON if applicable
+    try {
+      return JSON.parse(decryptedString);
+    } catch {
+      return decryptedString; // Return as string if not JSON
+    }
+  } catch (error) {
+    console.error("Error during decryption:", error);
+    return null;
+  }
+};
+
+// Function to store token and user in cookies
+const storeAuthData = (token, user, refreshToken) => {
+  Cookies.set("authToken", encryptData(token), { secure: true, expires: 7 });
+  Cookies.set("user", encryptData(JSON.stringify(user)), {
+    secure: true,
+    expires: 7,
+  });
+  Cookies.set("refreshToken", encryptData(refreshToken), {
+    secure: true,
+    expires: 7,
+  });
+};
+
+// Function to read token and user from cookies
+const readAuthData = () => {
+  const savedToken = Cookies.get("authToken");
+  const savedUser = Cookies.get("user");
+  const savedRefreshToken = Cookies.get("refreshToken");
+
+  if (savedToken && savedUser && savedRefreshToken) {
+    return {
+      token: decryptData(savedToken),
+      user: decryptData(savedUser),
+      refreshToken: decryptData(savedRefreshToken),
+    };
+  }
+  return { token: null, user: null, refreshToken: null };
+};
+
+// Function to clear cookies
+const clearAuthData = () => {
+  Cookies.remove("authToken");
+  Cookies.remove("user");
+  Cookies.remove("refreshToken");
+};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
-  const navigate = useNavigate();
+  const [refreshToken, setRefreshToken] = useState(null);
 
-  // Function to encrypt data
-  const encryptData = (data) => {
-    return CryptoJS.AES.encrypt(data, "your-secret-key").toString();
-  };
-
-  // Function to decrypt data
-  const decryptData = (data) => {
-    const bytes = CryptoJS.AES.decrypt(data, "your-secret-key");
-    return bytes.toString(CryptoJS.enc.Utf8);
-  };
-
-  // Load user and token from cookies on initial render
   useEffect(() => {
-    const savedToken = Cookies.get("authToken");
-    const savedUser = Cookies.get("user");
-
-    if (savedToken && savedUser) {
-      setToken(decryptData(savedToken));
-      setUser(JSON.parse(decryptData(savedUser)));
+    const {
+      token: savedToken,
+      user: savedUser,
+      refreshToken: savedRefreshToken,
+    } = readAuthData();
+    if (savedToken && savedUser && savedRefreshToken) {
+      setToken(savedToken);
+      setUser(savedUser);
+      setRefreshToken(savedRefreshToken);
     }
   }, []);
 
-  // Function to update user details
-  const updateUser = (user) => {
-    setUser(user);
-    Cookies.set("user", encryptData(JSON.stringify(user)), {
-      secure: true,
-      expires: 7,
-    });
-  };
-
-  // Function to log in a user
-  const login = (token, user) => {
+  const login = (token, user, refreshToken) => {
+    if (!token || !user || !refreshToken) {
+      console.error("Invalid token or user data provided to login.");
+      return;
+    }
     setToken(token);
     setUser(user);
-    Cookies.set("authToken", encryptData(token), { secure: true, expires: 7 });
-    Cookies.set("user", encryptData(JSON.stringify(user)), {
-      secure: true,
-      expires: 7,
-    });
+    setRefreshToken(refreshToken);
+    storeAuthData(token, user, refreshToken);
   };
 
-  // Function to log out the user
-  const logout = async () => {
-    if (token) {
-      await fetch("http://127.0.0.1:8000/api/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-    }
+  const logout = () => {
     setToken(null);
     setUser(null);
-    Cookies.remove("authToken");
-    Cookies.remove("user");
-    navigate("/signin");
+    setRefreshToken(null);
+    clearAuthData();
   };
 
-  // Provide the AuthContext values
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, token, refreshToken, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// PropTypes validation for AuthProvider
-AuthProvider.propTypes = {
-  children: PropTypes.node.isRequired,
-};
-
-// Custom hook to use the AuthContext
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;

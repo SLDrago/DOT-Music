@@ -1,43 +1,49 @@
 import { useState, useEffect } from "react";
 import Logo from "../../images/logos/Logo.svg";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useAuth } from "../../context/AuthContext";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
-const RESET_PASSWORD_ENDPOINT = `${API_BASE_URL}/reset-password`;
+const RESET_PASSWORD_ENDPOINT = `${API_BASE_URL}/api/users/reset-password/`;
 
 const ResetPassword = () => {
-  const [errors, setErrors] = useState("");
-  const [email, setEmail] = useState("");
-  const { token } = useAuth();
-  const [message, setMessage] = useState("");
-
+  const { token, uid } = useParams(); // Extract token and uid from the URL
+  const [password, setPassword] = useState("");
+  const [confPassword, setConfPassword] = useState("");
+  const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (token) {
-      navigate("/");
-    }
-  }, [token, navigate]);
+  //   useEffect(() => {
+  //     if (!token || !uid) {
+  //       toast.error("Invalid or expired link.");
+  //       navigate("/signin"); // Redirect to home or login if no token or uid
+  //     }
+  //   }, [token, uid, navigate]);
 
   useEffect(() => {
     const newErrors = {};
 
-    if (touched.email) {
-      if (!email) {
-        newErrors.email = "Email is required.";
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        newErrors.email = "Invalid email format.";
+    if (touched.password) {
+      if (!password) {
+        newErrors.password = "Password is required.";
+      } else if (password.length < 6) {
+        newErrors.password = "Password must be at least 6 characters long.";
+      }
+    }
+    if (touched.confPassword) {
+      if (!confPassword) {
+        newErrors.confPassword = "Confirm Password is required.";
+      } else if (password !== confPassword) {
+        newErrors.confPassword = "Passwords do not match.";
       }
     }
 
     setErrors(newErrors);
-  }, [email, touched]);
+  }, [password, confPassword, touched]);
 
-  const handleSendLink = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (Object.keys(errors).length > 0) {
@@ -46,21 +52,24 @@ const ResetPassword = () => {
     }
 
     try {
-      await toast.promise(
-        axios.post(RESET_PASSWORD_ENDPOINT, { email: email }),
+      const response = await toast.promise(
+        axios.post(RESET_PASSWORD_ENDPOINT, { uid, token, password }),
         {
-          pending: "Sending reset link...",
-          success: "Password reset link sent successfully!",
-          error: "Failed to send reset link. Please try again.",
+          pending: "Resetting password...",
+          success: "Password reset successful!",
+          error: "Password reset failed. Please try again.",
         }
       );
-      setMessage("A password reset link has been sent to your email.");
+
+      const { message } = response.data;
+      toast.success(message);
+      navigate("/signin"); // Redirect to login page after successful password reset
     } catch (error) {
       console.error(
-        "Error sending reset link:",
+        "Error during password reset:",
         error.response?.data || error.message
       );
-      setMessage("Failed to send password reset link. Please try again.");
+      toast.error("Failed to reset password. Please try again.");
     }
   };
 
@@ -77,28 +86,56 @@ const ResetPassword = () => {
             Reset your password
           </h1>
           <p className="text-gray-400 text-sm">
-            Enter the email address linked to your DOT-Music account and we’ll
-            send you an email.
+            We Gotcha covered! Enter your new password below.
           </p>
         </div>
-        <form onSubmit={handleSendLink} className="mt-6">
+        <form onSubmit={handleSubmit} className="mt-6">
           <div className="mb-4">
-            <label className="block text-gray-400 text-sm mb-1" htmlFor="email">
-              Email Address
+            <label
+              className="block text-gray-400 text-sm mb-1"
+              htmlFor="password"
+            >
+              New Password
             </label>
             <input
-              type="text"
-              id="email"
-              className={`w-full px-4 py-2 bg-gray-800 text-white rounded focus:ring-2 focus:ring-orange-500 focus:outline-none ${
-                errors.email ? "border-red-500 border-2" : ""
+              type="password"
+              id="password"
+              className={`w-full px-4 py-2 bg-gray-800 text-white rounded focus:outline-none ${
+                errors.password
+                  ? "border-red-500 border-2"
+                  : "focus:ring-2 focus:ring-orange-500"
               }`}
-              placeholder="Email"
-              onBlur={() => handleBlur("email")}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onBlur={() => handleBlur("password")}
+              placeholder="Enter new password"
             />
-            {errors.email && (
-              <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+            )}
+          </div>
+          <div className="mb-4">
+            <label
+              className="block text-gray-400 text-sm mb-1"
+              htmlFor="confPassword"
+            >
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              id="confPassword"
+              className={`w-full px-4 py-2 bg-gray-800 text-white rounded focus:outline-none ${
+                errors.confPassword
+                  ? "border-red-500 border-2"
+                  : "focus:ring-2 focus:ring-orange-500"
+              }`}
+              value={confPassword}
+              onChange={(e) => setConfPassword(e.target.value)}
+              onBlur={() => handleBlur("confPassword")}
+              placeholder="Confirm new password"
+            />
+            {errors.confPassword && (
+              <p className="text-red-500 text-xs mt-1">{errors.confPassword}</p>
             )}
           </div>
           <button
@@ -106,12 +143,15 @@ const ResetPassword = () => {
             className="w-full bg-orange-500 text-white font-medium py-2 rounded hover:bg-orange-600"
             disabled={Object.keys(errors).length > 0}
           >
-            Send link
+            Reset Password
           </button>
         </form>
-        {message && (
-          <p className="text-center text-gray-400 text-sm mt-4">{message}</p>
-        )}
+        <div className="mt-6 text-center text-gray-400 text-sm">
+          Remembered your password?{" "}
+          <NavLink to="/signin" className="text-orange-500 hover:underline">
+            Log in here
+          </NavLink>
+        </div>
       </div>
     </div>
   );

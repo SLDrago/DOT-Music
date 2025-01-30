@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import PageTitle from "./components/PageTitle";
 import Loader from "./components/Loader";
-import Home from "./pages/Home/home";
+import Home from "./pages/Home/Home";
 import NotFound from "./pages/NotFound404/NotFound404";
 import SignIn from "./pages/Authentication/signIn";
 import SignUp from "./pages/Authentication/SignUp";
+import ResetPasswordRequest from "./pages/Authentication/ResetPasswordRequest";
+
+import EditProfile from "./pages/EditProfile/EditProfile";
 import ResetPassword from "./pages/Authentication/ResetPassword";
 import Podcast from "./pages/podcast/Podcast";
 import Artists from "./pages/Artists/Artists";
@@ -58,7 +61,16 @@ function App() {
           }
         />
         <Route
-          path="/reset-password"
+          path="/reset-password-request"
+          element={
+            <>
+              <PageTitle title="Reset Password | DOT Music" />
+              <ResetPasswordRequest />
+            </>
+          }
+        />
+        <Route
+          path="/reset-password/*"
           element={
             <>
               <PageTitle title="Reset Password | DOT Music" />
@@ -108,6 +120,11 @@ function App() {
             <>
               <PageTitle title="Radios | DOT Music" />
               <SingleSection />
+          path="/edit-profile"
+          element={
+            <>
+              <PageTitle title="Edit Profile | DOT Music" />
+              <EditProfile />
             </>
           }
         />

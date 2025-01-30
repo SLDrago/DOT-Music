@@ -1,10 +1,21 @@
 import Logo from "../../images/logos/Logo.svg";
 import { useAuth } from "../../context/AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
 
 const TopNavBar = () => {
-  const { token } = useAuth();
+  const { token, user, logout } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [profileImage, setProfileImage] = useState(
+    "https://ui-avatars.com/api/?name=#"
+  );
+  useEffect(() => {
+    if (user) {
+      setProfileImage(
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}`
+      );
+    }
+  }, [user]);
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prevState) => !prevState);
@@ -34,14 +45,14 @@ const TopNavBar = () => {
               <a href="/signup">Sign Up</a>
             </button>
             <button className="px-4 py-2 rounded-md bg-orange-500 hover:bg-orange-600">
-            <a href="/signin">Log In</a>
+              <a href="/signin">Log In</a>
             </button>
           </>
         ) : (
           <div className="relative">
             {/* User Image */}
             <img
-              src="https://cdn.sstatic.net/Img/unified/sprites.svg?v=e5e58ae7df45"
+              src={profileImage}
               alt="profilepic"
               className="h-12 w-12 rounded-full cursor-pointer"
               onClick={toggleDropdown}
@@ -50,14 +61,15 @@ const TopNavBar = () => {
             {/* Dropdown */}
             {isDropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg">
-                <a
-                  href="#settings"
+                <NavLink
+                  to={"/edit-profile"}
                   className="block px-4 py-2 text-white hover:bg-gray-700 hover:text-orange-500"
                 >
                   Settings
-                </a>
+                </NavLink>
                 <a
-                  href="#logout"
+                  href="#"
+                  onClick={() => logout()}
                   className="block px-4 py-2 text-white hover:bg-gray-700 hover:text-orange-500"
                 >
                   Log Out

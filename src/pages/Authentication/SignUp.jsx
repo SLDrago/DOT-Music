@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
-const SIGNUP_ENDPOINT = `${API_BASE_URL}/signup`;
+const SIGNUP_ENDPOINT = `${API_BASE_URL}/users/register/`;
 
 const SignUp = () => {
   const [name, setName] = useState("");
@@ -73,9 +73,15 @@ const SignUp = () => {
         }
       );
 
-      const { token, user } = response.data;
-      login(token, user);
-      navigate("/");
+      const { access_token, refresh_token, ...userDetails } =
+        response.data.user;
+
+      if (access_token && userDetails) {
+        login(access_token, { ...userDetails }, refresh_token);
+        navigate("/");
+      } else {
+        console.error("Invalid login response structure.");
+      }
     } catch (error) {
       console.error(
         "Error during signup:",
