@@ -1,24 +1,24 @@
-import React from 'react';
-import Sidebar from './Sidebar';
-import Navbar from './Navbar';
-import { Routes, Route } from 'react-router-dom';
-import HomeMain from './HomeMain';
-import Search from './Search';
-import YourLibaray from './YourLibaray';
-import Profile from './Profile';
-import Setting from './Setting';
+import React from "react";
+import Sidebar from "../../components/Artist/Sidebar";
+import Navbar from "../../components/Artist/Navbar";
+import { Routes, Route } from "react-router-dom";
+import HomeMain from "../../components/Artist/HomeMain";
+import Search from "../../components/Artist/Search";
+import YourLibaray from "../../components/Artist/YourLibaray";
+import Profile from "../../components/Artist/Profile";
+import Setting from "../../components/Artist/Setting";
 
-const Home = () => {
+const AdminHome = () => {
   return (
     <div className="flex h-screen bg-gray-900 text-white">
       {/* Sidebar */}
       <Sidebar />
-      
+
       {/* Main Content Area */}
       <div className="flex flex-col flex-grow">
         {/* Navbar */}
         <Navbar />
-        
+
         {/* Content */}
         <div className="flex-grow overflow-y-auto p-6">
           <Routes>
@@ -34,4 +34,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default AdminHome;
