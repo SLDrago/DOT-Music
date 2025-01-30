@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Hide default scrollbar for all browsers */
+.scrollable-content {
+    overflow-y: scroll;
+    scrollbar-width: none; /* For Firefox */
+    -ms-overflow-style: none; /* For IE and Edge */
+  }
+  
+  .scrollable-content::-webkit-scrollbar {
+    display: none; /* For Chrome, Safari, and Opera */
+  }
+  

@@ -7,6 +7,11 @@ import NotFound from "./pages/NotFound404/NotFound404";
 import SignIn from "./pages/Authentication/signIn";
 import SignUp from "./pages/Authentication/SignUp";
 import ResetPassword from "./pages/Authentication/ResetPassword";
+import Podcast from "./pages/podcast/Podcast";
+import Artists from "./pages/Artists/Artists";
+import Albums from "./pages/Albums/Albums";
+import Radios from "./pages/Radios/Radios";
+import SingleSection from "./pages/SingleSection/SingleSection";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -58,6 +63,51 @@ function App() {
             <>
               <PageTitle title="Reset Password | DOT Music" />
               <ResetPassword />
+            </>
+          }
+        />
+        <Route
+          path="/bodcast"
+          element={
+            <>
+              <PageTitle title="Bodcast | DOT Music" />
+              <Podcast/>
+            </>
+          }
+        />
+        <Route
+          path="/full-artists"
+          element={
+            <>
+              <PageTitle title="Artists | DOT Music" />
+              <Artists/>
+            </>
+          }
+        />
+        <Route
+          path="/full-albums"
+          element={
+            <>
+              <PageTitle title="Album | DOT Music" />
+              <Albums/>
+            </>
+          }
+        />
+        <Route
+          path="/full-radio"
+          element={
+            <>
+              <PageTitle title="Radios | DOT Music" />
+              <Radios/>
+            </>
+          }
+        />
+        <Route
+          path="/SingleSection/:artistId" 
+          element={
+            <>
+              <PageTitle title="Radios | DOT Music" />
+              <SingleSection />
             </>
           }
         />
