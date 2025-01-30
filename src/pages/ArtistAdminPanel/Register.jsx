@@ -1,42 +1,42 @@
 // src/components/Register.js
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
-import api from '../api'; // Import the axios instance
-import background from "../assets/cyber-tech-music-concept-show-for-roberts.png"; // Background image
-import logo from "../assets/logo.svg"; // Logo image (adjust the path as needed)
+import React, { useState } from "react";
+import { useNavigate, NavLink } from "react-router-dom"; // Import useNavigate for redirection
+import api from "../../components/Artist/api"; // Import the axios instance
+import background from "../../images/logos/Logo.svg"; // Background image
+import logo from "../../images/logos/Logo.svg"; // Logo image (adjust the path as needed)
 
-const Register = ({ setToken }) => {
+const AdminRegister = ({ setToken }) => {
   const navigate = useNavigate(); // Initialize navigate for redirecting
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
-  const [bio, setBio] = useState('');
-  const [artistType, setArtistType] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [bio, setBio] = useState("");
+  const [artistType, setArtistType] = useState("");
+  const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
   // Hardcoded artist types
   const ARTIST_TYPES = [
-    { value: 'pop', label: 'Pop' },
-    { value: 'rock', label: 'Rock' },
-    { value: 'hip_hop', label: 'Hip-Hop' },
-    { value: 'jazz', label: 'Jazz' },
-    { value: 'classical', label: 'Classical' },
-    { value: 'reggae', label: 'Reggae' },
-    { value: 'electronic', label: 'Electronic' },
-    { value: 'country', label: 'Country' },
-    { value: 'blues', label: 'Blues' },
-    { value: 'metal', label: 'Metal' },
+    { value: "pop", label: "Pop" },
+    { value: "rock", label: "Rock" },
+    { value: "hip_hop", label: "Hip-Hop" },
+    { value: "jazz", label: "Jazz" },
+    { value: "classical", label: "Classical" },
+    { value: "reggae", label: "Reggae" },
+    { value: "electronic", label: "Electronic" },
+    { value: "country", label: "Country" },
+    { value: "blues", label: "Blues" },
+    { value: "metal", label: "Metal" },
     // Add other genres as needed
   ];
 
   // Handle registration
   const handleRegister = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setSuccess(false);
     try {
-      const response = await api.post('artist/register/', {
+      const response = await api.post("artist/register/", {
         username,
         password,
         email,
@@ -45,15 +45,15 @@ const Register = ({ setToken }) => {
       });
       const token = response.data.token;
       setToken(token); // Store token in parent component
-      localStorage.setItem('authToken', token); // Save token to localStorage
+      localStorage.setItem("authToken", token); // Save token to localStorage
       setSuccess(true);
 
       // Redirect to login after a successful registration
       setTimeout(() => {
-        navigate('/login'); // Redirect to login page
+        navigate("/login"); // Redirect to login page
       }, 2000); // Redirect after 2 seconds for user experience
     } catch (err) {
-      setError(err.response?.data?.error || 'Error during registration');
+      setError(err.response?.data?.error || "Error during registration");
     }
   };
 
@@ -66,13 +66,16 @@ const Register = ({ setToken }) => {
           <div className="flex justify-center mb-8">
             <img src={logo} alt="Logo" className="h-12" />
           </div>
-          
+
           <h2 className="text-center text-2xl font-bold tracking-tight text-gray-900">
             Register to your account
           </h2>
           <form onSubmit={handleRegister} className="space-y-4 mt-8">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-900">
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-gray-900"
+              >
                 Username
               </label>
               <div className="mt-2">
@@ -89,7 +92,10 @@ const Register = ({ setToken }) => {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-900">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-900"
+              >
                 Password
               </label>
               <div className="mt-2">
@@ -106,7 +112,10 @@ const Register = ({ setToken }) => {
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-900">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-900"
+              >
                 Email
               </label>
               <div className="mt-2">
@@ -123,7 +132,10 @@ const Register = ({ setToken }) => {
             </div>
 
             <div>
-              <label htmlFor="bio" className="block text-sm font-medium text-gray-900">
+              <label
+                htmlFor="bio"
+                className="block text-sm font-medium text-gray-900"
+              >
                 Bio
               </label>
               <div className="mt-2">
@@ -139,7 +151,10 @@ const Register = ({ setToken }) => {
             </div>
 
             <div>
-              <label htmlFor="artistType" className="block text-sm font-medium text-gray-900">
+              <label
+                htmlFor="artistType"
+                className="block text-sm font-medium text-gray-900"
+              >
                 Artist Type
               </label>
               <div className="mt-2">
@@ -169,14 +184,21 @@ const Register = ({ setToken }) => {
             </button>
           </form>
 
-          {success && <p className="text-green-500 text-sm mt-4">Registration successful! Redirecting...</p>}
+          {success && (
+            <p className="text-green-500 text-sm mt-4">
+              Registration successful! Redirecting...
+            </p>
+          )}
           {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
 
           <p className="mt-4 text-center text-sm text-gray-500">
-            Already have an account?{' '}
-            <a href="/login" className="font-semibold text-orange-500 hover:text-orange-600">
+            Already have an account?{" "}
+            <NavLink
+              to="/ArtistAdminPanel/login"
+              className="font-semibold text-orange-500 hover:text-orange-600"
+            >
               Login here
-            </a>
+            </NavLink>
           </p>
         </div>
       </div>
@@ -193,4 +215,4 @@ const Register = ({ setToken }) => {
   );
 };
 
-export default Register;
+export default AdminRegister;

@@ -10,6 +10,9 @@ import ResetPasswordRequest from "./pages/Authentication/ResetPasswordRequest";
 
 import EditProfile from "./pages/EditProfile/EditProfile";
 import ResetPassword from "./pages/Authentication/ResetPassword";
+import AdminLogin from "./pages/ArtistAdminPanel/Login";
+import AdminRegister from "./pages/ArtistAdminPanel/Register";
+import AdminHome from "./pages/ArtistAdminPanel/Home";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -79,6 +82,33 @@ function App() {
             <>
               <PageTitle title="Edit Profile | DOT Music" />
               <EditProfile />
+            </>
+          }
+        />
+        <Route
+          path="/ArtistAdminPanel/login"
+          element={
+            <>
+              <PageTitle title="Artist Login | DOT Music" />
+              <AdminLogin />
+            </>
+          }
+        />
+        <Route
+          path="/ArtistAdminPanel/register"
+          element={
+            <>
+              <PageTitle title="Artist Register | DOT Music" />
+              <AdminRegister />
+            </>
+          }
+        />
+        <Route
+          path="/ArtistAdminPanel/home"
+          element={
+            <>
+              <PageTitle title="Artist Panel | DOT Music" />
+              <AdminHome />
             </>
           }
         />
