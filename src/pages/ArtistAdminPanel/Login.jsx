@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom"; // Import useNavigate for redirection
 import api from "../../components/Artist/api"; // Import your axios instance
-import background from "../../images/logos/Logo.svg";
+import background from "../../images/logos/modern-background-designed-for-a-music-streaming-w.png";
 import logo from "../../images/logos/Logo.svg";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline"; // Import eye icons for toggle
 
