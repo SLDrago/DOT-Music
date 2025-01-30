@@ -15,6 +15,9 @@ import Artists from "./pages/Artists/Artists";
 import Albums from "./pages/Albums/Albums";
 import Radios from "./pages/Radios/Radios";
 import SingleSection from "./pages/SingleSection/SingleSection";
+import AdminLogin from "./pages/ArtistAdminPanel/Login";
+import AdminRegister from "./pages/ArtistAdminPanel/Register";
+import AdminHome from "./pages/ArtistAdminPanel/Home";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -125,6 +128,33 @@ function App() {
             <>
               <PageTitle title="Edit Profile | DOT Music" />
               <EditProfile />
+            </>
+          }
+        />
+        <Route
+          path="/ArtistAdminPanel/login"
+          element={
+            <>
+              <PageTitle title="Artist Login | DOT Music" />
+              <AdminLogin />
+            </>
+          }
+        />
+        <Route
+          path="/ArtistAdminPanel/register"
+          element={
+            <>
+              <PageTitle title="Artist Register | DOT Music" />
+              <AdminRegister />
+            </>
+          }
+        />
+        <Route
+          path="/ArtistAdminPanel/home"
+          element={
+            <>
+              <PageTitle title="Artist Panel | DOT Music" />
+              <AdminHome />
             </>
           }
         />

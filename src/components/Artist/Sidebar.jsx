@@ -4,18 +4,14 @@ import { Link } from "react-router-dom";
 import { HiHome, HiSearch, HiUser, HiOutlineCog } from "react-icons/hi";
 import { BiLibrary } from "react-icons/bi";
 import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube } from "react-icons/fa";
-import logo from "../assets/logo.svg";
+import logo from "../../images/logos/Logo.svg";
 
 const Sidebar = () => {
   return (
     <div className="flex flex-col h-screen bg-gray-800 text-white !w-64 p-4">
       {/* Logo */}
       <div className="flex justify-center mb-6">
-        <img
-          src={logo}
-          alt="DOT-Music Logo"
-          className="w-20 h-auto"
-        />
+        <img src={logo} alt="DOT-Music Logo" className="w-20 h-auto" />
       </div>
 
       {/* Navigation */}
