@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom"; // Import useNavigate for redirection
 import api from "../../components/Artist/api"; // Import the axios instance
-import background from "../../images/logos/Logo.svg"; // Background image
+import background from "../../images/logos/cyber-tech-music-concept-show-for-roberts.png"; // Background image
 import logo from "../../images/logos/Logo.svg"; // Logo image (adjust the path as needed)
 
 const AdminRegister = () => {

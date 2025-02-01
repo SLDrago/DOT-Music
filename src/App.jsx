@@ -10,6 +10,11 @@ import ResetPasswordRequest from "./pages/Authentication/ResetPasswordRequest";
 
 import EditProfile from "./pages/EditProfile/EditProfile";
 import ResetPassword from "./pages/Authentication/ResetPassword";
+import Podcast from "./pages/podcast/Podcast";
+import Artists from "./pages/Artists/Artists";
+import Albums from "./pages/Albums/Albums";
+import Radios from "./pages/Radios/Radios";
+import SingleSection from "./pages/SingleSection/SingleSection";
 import AdminLogin from "./pages/ArtistAdminPanel/Login";
 import AdminRegister from "./pages/ArtistAdminPanel/Register";
 import AdminHome from "./pages/ArtistAdminPanel/Home";
@@ -82,6 +87,51 @@ function App() {
           }
         />
         <Route
+          path="/bodcast"
+          element={
+            <>
+              <PageTitle title="Bodcast | DOT Music" />
+              <Podcast/>
+            </>
+          }
+        />
+        <Route
+          path="/full-artists"
+          element={
+            <>
+              <PageTitle title="Artists | DOT Music" />
+              <Artists/>
+            </>
+          }
+        />
+        <Route
+          path="/full-albums"
+          element={
+            <>
+              <PageTitle title="Album | DOT Music" />
+              <Albums/>
+            </>
+          }
+        />
+        <Route
+          path="/full-radio"
+          element={
+            <>
+              <PageTitle title="Radios | DOT Music" />
+              <Radios/>
+            </>
+          }
+        />
+        <Route
+          path="/SingleSection/:artistId" 
+          element={
+            <>
+              <PageTitle title="Radios | DOT Music" />
+              <SingleSection />
+            </>
+          }
+            />
+           <Route 
           path="/edit-profile"
           element={
             <>
