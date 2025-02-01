@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const HomeMain = () => {
   const [songs, setSongs] = useState([]);
@@ -9,18 +9,18 @@ const HomeMain = () => {
   useEffect(() => {
     const fetchSongs = async () => {
       try {
-        const token = localStorage.getItem('authToken');
-        if (!token) throw new Error('Authentication token is missing.');
+        const token = localStorage.getItem("authToken");
+        if (!token) throw new Error("Authentication token is missing.");
 
-        const response = await axios.get('http://localhost:8000/api/songs/', {
+        const response = await axios.get("http://localhost:8000/api/songs/", {
           headers: {
-            Authorization: `Token ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         setSongs(response.data);
       } catch (error) {
-        console.error('Error fetching songs:', error);
-        setError('Unable to fetch your songs. Please try again.');
+        console.error("Error fetching songs:", error);
+        setError("Unable to fetch your songs. Please try again.");
       } finally {
         setLoading(false);
       }

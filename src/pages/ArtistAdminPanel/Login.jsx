@@ -5,8 +5,8 @@ import background from "../../images/logos/Logo.svg";
 import logo from "../../images/logos/Logo.svg";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline"; // Import eye icons for toggle
 
-const AdminLogin = ({ setToken }) => {
-  const [username, setUsername] = useState("");
+const AdminLogin = () => {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
@@ -15,18 +15,20 @@ const AdminLogin = ({ setToken }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      console.log("Attempting login with credentials:", { username, password });
-      const response = await api.post("artist/login/", { username, password });
+      console.log("Attempting login with credentials:", { email, password });
+      const response = await api.post("artist/login/", { email, password });
 
       // Store the token and other details in state and localStorage
-      setToken(response.data.token); // Store the token in state
-      localStorage.setItem("authToken", response.data.token); // Save token to localStorage
-      localStorage.setItem("username", username); // Save username to localStorage
-      localStorage.setItem("artistName", response.data.artistName); // Save artist name to localStorage
-      localStorage.setItem("artistId", response.data.artistId); // Save artist ID to localStorage
+      // Extract the tokens and artist data from the response
+      const { access_token, refresh_token, artist } = response.data;
+
+      localStorage.setItem("authToken", access_token); // Store access token in localStorage
+      localStorage.setItem("refreshToken", refresh_token); // Store refresh token in localStorage
+      localStorage.setItem("username", artist.name);
+      localStorage.setItem("artistId", artist.id); // Save artist ID to localStorage
 
       console.log("Login successful, redirecting...");
-      navigate("/"); // Redirect to the homepage after successful login
+      navigate("/ArtistAdminPanel/home"); // Redirect to the homepage after successful login
     } catch (err) {
       console.error("Login error: ", err.response || err);
       if (err.response && err.response.data) {
@@ -66,19 +68,19 @@ const AdminLogin = ({ setToken }) => {
           <form onSubmit={handleLogin} className="space-y-6 mt-8">
             <div>
               <label
-                htmlFor="username"
+                htmlFor="email"
                 className="block text-sm font-medium text-gray-900"
               >
-                Username
+                Email
               </label>
               <div className="mt-2">
                 <input
-                  id="username"
-                  name="username"
+                  id="email"
+                  name="email"
                   type="text"
                   required
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-indigo-600 sm:text-sm"
                 />
               </div>

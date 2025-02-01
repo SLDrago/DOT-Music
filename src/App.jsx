@@ -13,6 +13,11 @@ import ResetPassword from "./pages/Authentication/ResetPassword";
 import AdminLogin from "./pages/ArtistAdminPanel/Login";
 import AdminRegister from "./pages/ArtistAdminPanel/Register";
 import AdminHome from "./pages/ArtistAdminPanel/Home";
+import HomeMain from "./components/Artist/HomeMain";
+import Search from "./components/Artist/Search";
+import Profile from "./components/Artist/Profile";
+import YourLibrary from "./components/Artist/YourLibaray";
+import Setting from "./components/Artist/Setting";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -103,15 +108,65 @@ function App() {
             </>
           }
         />
-        <Route
-          path="/ArtistAdminPanel/home"
-          element={
-            <>
-              <PageTitle title="Artist Panel | DOT Music" />
-              <AdminHome />
-            </>
-          }
-        />
+        {/* Route for AdminHome (Artist Panel) */}
+        <Route path="/ArtistAdminPanel/*" element={<AdminHome />}>
+          <Route
+            index
+            element={<PageTitle title="Artist Panel | DOT Music" />}
+          />
+
+          {/* Nested routes for different sections of the Artist Admin Panel */}
+          <Route
+            path="home"
+            element={
+              <>
+                <PageTitle title="Artist Panel Home | DOT Music" />
+                <HomeMain />
+              </>
+            }
+          />
+
+          <Route
+            path="search"
+            element={
+              <>
+                <PageTitle title="Search | DOT Music" />
+                <Search />
+              </>
+            }
+          />
+
+          <Route
+            path="library"
+            element={
+              <>
+                <PageTitle title="Your Library | DOT Music" />
+                <YourLibrary />
+              </>
+            }
+          />
+
+          <Route
+            path="profile"
+            element={
+              <>
+                <PageTitle title="Profile | DOT Music" />
+                <Profile />
+              </>
+            }
+          />
+
+          <Route
+            path="settings"
+            element={
+              <>
+                <PageTitle title="Settings | DOT Music" />
+                <Setting />
+              </>
+            }
+          />
+        </Route>
+
         <Route
           path="*"
           element={

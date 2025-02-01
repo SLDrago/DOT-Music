@@ -15,7 +15,7 @@ const EditProfile = () => {
     new_password: "",
   });
   const [confpassword, setConfPassword] = useState("");
-  const { token, user, refreshToken } = useAuth();
+  const { token, user } = useAuth();
   const [profileImage, setProfileImage] = useState(
     `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}`
   );

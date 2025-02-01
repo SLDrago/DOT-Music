@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Logo from "../../images/logos/Logo.svg";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
@@ -109,6 +109,12 @@ const ResetPasswordRequest = () => {
             Send link
           </button>
         </form>
+        <div className="mt-6 text-center text-gray-400 text-sm">
+          Remembered your password?{" "}
+          <NavLink to="/signin" className="text-orange-500 hover:underline">
+            Log in here
+          </NavLink>
+        </div>
         {message && (
           <p className="text-center text-gray-400 text-sm mt-4">{message}</p>
         )}

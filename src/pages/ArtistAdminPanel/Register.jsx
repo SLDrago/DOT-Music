@@ -5,7 +5,7 @@ import api from "../../components/Artist/api"; // Import the axios instance
 import background from "../../images/logos/Logo.svg"; // Background image
 import logo from "../../images/logos/Logo.svg"; // Logo image (adjust the path as needed)
 
-const AdminRegister = ({ setToken }) => {
+const AdminRegister = () => {
   const navigate = useNavigate(); // Initialize navigate for redirecting
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -30,7 +30,6 @@ const AdminRegister = ({ setToken }) => {
     // Add other genres as needed
   ];
 
-  // Handle registration
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
@@ -43,14 +42,21 @@ const AdminRegister = ({ setToken }) => {
         bio,
         artist_type: artistType,
       });
-      const token = response.data.token;
-      setToken(token); // Store token in parent component
-      localStorage.setItem("authToken", token); // Save token to localStorage
+
+      // Extract the tokens and artist data from the response
+      const { access_token, refresh_token, artist } = response.data;
+
+      localStorage.setItem("authToken", access_token); // Store access token in localStorage
+      localStorage.setItem("refreshToken", refresh_token); // Store refresh token in localStorage
+
+      // Store the artist data (for example, you can store it in the state or pass it to a parent component)
+      localStorage.setItem("username", artist.name); // Assuming you have a setArtist function or similar to update state
+
       setSuccess(true);
 
       // Redirect to login after a successful registration
       setTimeout(() => {
-        navigate("/login"); // Redirect to login page
+        navigate("/ArtistAdminPanel/home"); // Redirect to login page
       }, 2000); // Redirect after 2 seconds for user experience
     } catch (err) {
       setError(err.response?.data?.error || "Error during registration");
