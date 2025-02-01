@@ -17,7 +17,7 @@ const Sidebar = () => {
       {/* Navigation */}
       <nav className="flex flex-col space-y-3 flex-grow">
         <Link
-          to="/"
+          to="/ArtistAdminPanel/home"
           className="flex items-center space-x-3 text-base hover:bg-orange-700 p-2 rounded-md transition-all duration-300"
         >
           <HiHome size={20} />
@@ -25,7 +25,7 @@ const Sidebar = () => {
         </Link>
 
         <Link
-          to="/search"
+          to="/ArtistAdminPanel/search"
           className="flex items-center space-x-3 text-base hover:bg-orange-700 p-2 rounded-md transition-all duration-300"
         >
           <HiSearch size={20} />
@@ -33,7 +33,7 @@ const Sidebar = () => {
         </Link>
 
         <Link
-          to="/library"
+          to="/ArtistAdminPanel/library"
           className="flex items-center space-x-3 text-base hover:bg-orange-700 p-2 rounded-md transition-all duration-300"
         >
           <BiLibrary size={20} />
@@ -43,7 +43,7 @@ const Sidebar = () => {
         <div className="border-t border-gray-700 my-3"></div>
 
         <Link
-          to="/profile"
+          to="/ArtistAdminPanel/profile"
           className="flex items-center space-x-3 text-base hover:bg-orange-700 p-2 rounded-md transition-all duration-300"
         >
           <HiUser size={20} />
@@ -51,7 +51,7 @@ const Sidebar = () => {
         </Link>
 
         <Link
-          to="/settings"
+          to="/ArtistAdminPanel/settings"
           className="flex items-center space-x-3 text-base hover:bg-orange-700 p-2 rounded-md transition-all duration-300"
         >
           <HiOutlineCog size={20} />

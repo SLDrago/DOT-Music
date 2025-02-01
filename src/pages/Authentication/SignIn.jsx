@@ -142,7 +142,7 @@ const SignIn = () => {
         </form>
         <div className="mt-4 text-center">
           <NavLink
-            to="/reset-password"
+            to="/reset-password-request"
             className="text-orange-500 text-sm hover:underline"
           >
             Forgot your password?

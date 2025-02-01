@@ -1,26 +1,30 @@
 import { useState, useEffect } from "react";
 import Logo from "../../images/logos/Logo.svg";
-import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
-const RESET_PASSWORD_ENDPOINT = `${API_BASE_URL}/api/users/reset-password/`;
+const RESET_PASSWORD_ENDPOINT = `${API_BASE_URL}/users/reset-password/`;
 
 const ResetPassword = () => {
-  const { token, uid } = useParams(); // Extract token and uid from the URL
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
+  const uid = queryParams.get("uid");
+  const token = queryParams.get("token");
   const [password, setPassword] = useState("");
   const [confPassword, setConfPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const navigate = useNavigate();
 
-  //   useEffect(() => {
-  //     if (!token || !uid) {
-  //       toast.error("Invalid or expired link.");
-  //       navigate("/signin"); // Redirect to home or login if no token or uid
-  //     }
-  //   }, [token, uid, navigate]);
+  useEffect(() => {
+    if (!token || !uid) {
+      toast.error("Invalid or expired link.");
+      navigate("/signin");
+    }
+  }, [token, uid, navigate]);
 
   useEffect(() => {
     const newErrors = {};
@@ -63,7 +67,7 @@ const ResetPassword = () => {
 
       const { message } = response.data;
       toast.success(message);
-      navigate("/signin"); // Redirect to login page after successful password reset
+      navigate("/signin");
     } catch (error) {
       console.error(
         "Error during password reset:",

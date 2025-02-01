@@ -1,12 +1,7 @@
 import React from "react";
 import Sidebar from "../../components/Artist/Sidebar";
 import Navbar from "../../components/Artist/Navbar";
-import { Routes, Route } from "react-router-dom";
-import HomeMain from "../../components/Artist/HomeMain";
-import Search from "../../components/Artist/Search";
-import YourLibaray from "../../components/Artist/YourLibaray";
-import Profile from "../../components/Artist/Profile";
-import Setting from "../../components/Artist/Setting";
+import { Outlet } from "react-router-dom"; // To render the nested routes
 
 const AdminHome = () => {
   return (
@@ -21,13 +16,8 @@ const AdminHome = () => {
 
         {/* Content */}
         <div className="flex-grow overflow-y-auto p-6">
-          <Routes>
-            <Route path="/" element={<HomeMain />} />
-            <Route path="/search" element={<Search />} />
-            <Route path="/library" element={<YourLibaray />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/settings" element={<Setting />} />
-          </Routes>
+          {/* The nested routes will be rendered here */}
+          <Outlet />
         </div>
       </div>
     </div>
