@@ -19,11 +19,10 @@ const decryptData = (data) => {
     const bytes = CryptoJS.AES.decrypt(data, "your-secret-key");
     const decryptedString = bytes.toString(CryptoJS.enc.Utf8);
 
-    // Attempt to parse JSON if applicable
     try {
       return JSON.parse(decryptedString);
     } catch {
-      return decryptedString; // Return as string if not JSON
+      return decryptedString;
     }
   } catch (error) {
     console.error("Error during decryption:", error);
@@ -31,9 +30,8 @@ const decryptData = (data) => {
   }
 };
 
-// Function to store token and user in cookies
 const storeAuthData = (token, user, refreshToken) => {
-  Cookies.set("authToken", encryptData(token), { secure: true, expires: 7 });
+  Cookies.set("authToken", encryptData(token), { secure: true, expires: 1 });
   Cookies.set("user", encryptData(JSON.stringify(user)), {
     secure: true,
     expires: 7,
@@ -44,7 +42,6 @@ const storeAuthData = (token, user, refreshToken) => {
   });
 };
 
-// Function to read token and user from cookies
 const readAuthData = () => {
   const savedToken = Cookies.get("authToken");
   const savedUser = Cookies.get("user");
@@ -60,7 +57,6 @@ const readAuthData = () => {
   return { token: null, user: null, refreshToken: null };
 };
 
-// Function to clear cookies
 const clearAuthData = () => {
   Cookies.remove("authToken");
   Cookies.remove("user");

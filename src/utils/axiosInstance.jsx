@@ -1,9 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 import CryptoJS from "crypto-js";
-// Import your decryption utility
 
-// Base API URL
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const encryptData = (data) => {
@@ -32,7 +30,6 @@ const decryptData = (data) => {
   }
 };
 
-// Create an Axios instance
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -40,7 +37,6 @@ const axiosInstance = axios.create({
   },
 });
 
-// Request Interceptor to Attach Token
 axiosInstance.interceptors.request.use(
   (config) => {
     const encryptedToken = Cookies.get("authToken");
@@ -53,13 +49,11 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response Interceptor to Handle Token Expiry
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    // Check if the error is due to token expiration
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
@@ -68,7 +62,6 @@ axiosInstance.interceptors.response.use(
         if (encryptedRefreshToken) {
           const refreshToken = decryptData(encryptedRefreshToken);
 
-          // Call the API to refresh the token
           const response = await axios.post(
             `${API_BASE_URL}/users/token/refresh/`,
             {
@@ -78,7 +71,6 @@ axiosInstance.interceptors.response.use(
           console.log(refreshToken);
           const { access } = response.data;
 
-          // Store the new tokens
           Cookies.set("authToken", encryptData(access), {
             secure: true,
             expires: 1,
@@ -88,7 +80,6 @@ axiosInstance.interceptors.response.use(
         }
       } catch (refreshError) {
         console.error("Token refresh failed:", refreshError);
-        // Handle logout or redirect to login
         Cookies.remove("authToken");
         Cookies.remove("refreshToken");
         Cookies.remove("user");
