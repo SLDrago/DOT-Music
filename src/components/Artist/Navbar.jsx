@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { Disclosure, Menu } from '@headlessui/react';
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import React, { useState, useEffect } from "react";
+import { Disclosure, Menu } from "@headlessui/react";
+import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
+  return classes.filter(Boolean).join(" ");
 }
 
 export default function Navbar() {
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem('username');
+    const storedUsername = localStorage.getItem("username");
     if (storedUsername) {
       setUsername(storedUsername); // Retrieve username from localStorage
     }
@@ -19,17 +19,17 @@ export default function Navbar() {
   // Logout functionality
   const handleLogout = () => {
     // Remove username, token, and refreshToken from localStorage
-    localStorage.removeItem('username');
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
+    localStorage.removeItem("username");
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
 
     // Redirect to login page
-    window.location.href = '/login'; // You can change '/login' to the appropriate login URL
+    window.location.href = "/ArtistAdminPanel/login"; // You can change '/login' to the appropriate login URL
   };
 
   // Get the first letter of the username
   const getFirstLetter = (name) => {
-    return name ? name.charAt(0).toUpperCase() : '';
+    return name ? name.charAt(0).toUpperCase() : "";
   };
 
   return (
@@ -49,14 +49,16 @@ export default function Navbar() {
                   )}
                 </Disclosure.Button>
               </div>
-              
+
               {/* Left side (Profile & Notifications) */}
               <div className="flex items-center sm:ml-6">
                 {/* Display username if available */}
                 {username ? (
                   <span className="text-white mr-4 text-sm">{`Hello, ${username}`}</span>
                 ) : (
-                  <span className="text-white mr-4 text-sm">Welcome, Guest!</span>
+                  <span className="text-white mr-4 text-sm">
+                    Welcome, Guest!
+                  </span>
                 )}
 
                 {/* Profile dropdown */}
@@ -76,8 +78,8 @@ export default function Navbar() {
                         <a
                           href="/profile"
                           className={classNames(
-                            active ? 'bg-gray-100' : '',
-                            'block px-4 py-2 text-sm text-gray-700',
+                            active ? "bg-gray-100" : "",
+                            "block px-4 py-2 text-sm text-gray-700"
                           )}
                         >
                           Your Profile
@@ -89,8 +91,8 @@ export default function Navbar() {
                         <a
                           href="/settings"
                           className={classNames(
-                            active ? 'bg-gray-100' : '',
-                            'block px-4 py-2 text-sm text-gray-700',
+                            active ? "bg-gray-100" : "",
+                            "block px-4 py-2 text-sm text-gray-700"
                           )}
                         >
                           Settings
@@ -103,8 +105,8 @@ export default function Navbar() {
                         <button
                           onClick={handleLogout}
                           className={classNames(
-                            active ? 'bg-gray-100' : '',
-                            'block px-4 py-2 text-sm text-gray-700 w-full text-left',
+                            active ? "bg-gray-100" : "",
+                            "block px-4 py-2 text-sm text-gray-700 w-full text-left"
                           )}
                         >
                           Sign out
