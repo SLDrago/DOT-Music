@@ -4,7 +4,7 @@ import PageTitle from "./components/PageTitle";
 import Loader from "./components/Loader";
 import Home from "./pages/Home/Home";
 import NotFound from "./pages/NotFound404/NotFound404";
-import SignIn from "./pages/Authentication/signIn";
+import SignIn from "./pages/Authentication/SignIn";
 import SignUp from "./pages/Authentication/SignUp";
 import ResetPasswordRequest from "./pages/Authentication/ResetPasswordRequest";
 
@@ -91,7 +91,7 @@ function App() {
           element={
             <>
               <PageTitle title="Bodcast | DOT Music" />
-              <Podcast/>
+              <Podcast />
             </>
           }
         />
@@ -100,7 +100,7 @@ function App() {
           element={
             <>
               <PageTitle title="Artists | DOT Music" />
-              <Artists/>
+              <Artists />
             </>
           }
         />
@@ -109,7 +109,7 @@ function App() {
           element={
             <>
               <PageTitle title="Album | DOT Music" />
-              <Albums/>
+              <Albums />
             </>
           }
         />
@@ -118,20 +118,20 @@ function App() {
           element={
             <>
               <PageTitle title="Radios | DOT Music" />
-              <Radios/>
+              <Radios />
             </>
           }
         />
         <Route
-          path="/SingleSection/:artistId" 
+          path="/SingleSection/:artistId"
           element={
             <>
               <PageTitle title="Radios | DOT Music" />
               <SingleSection />
             </>
           }
-            />
-           <Route 
+        />
+        <Route
           path="/edit-profile"
           element={
             <>
